@@ -1,18 +1,12 @@
-/**
- * Computes the periodical payment necessary to re-pay a given loan.
- */
+
 public class LoanCalc{
 
     static double epsilon = 0.001;  // The computation tolerance (estimation error)
     static int iterationCounter;    // Monitors the efficiency of the calculation
 
-    /**
-     * Gets the loan data and computes the periodical payment.
-     * Expects to get three command-line arguments: sum of the loan (double),
-     * interest rate (double, as a percentage), and number of payments (int).
-     */
+  
     public static void main(String[] args) {
-        // Gets the loan data
+        
         double loan = Double.parseDouble(args[0]);
         double rate = Double.parseDouble(args[1]);
         int n = Integer.parseInt(args[2]);
@@ -36,7 +30,7 @@ public class LoanCalc{
     public static double bruteForceSolver(double loan, double rate, int n, double epsilon) {
 
         iterationCounter = 0;
-        int currentLoan = loan; // temp for calculations
+        double currentLoan = loan; // temp for calculations
         double periodPay = loan / n;
 
 
@@ -83,7 +77,7 @@ public class LoanCalc{
 
     private static double endBalance(double loan, double rate, int n, double payment) {
 
-        int currentLoan = loan;
+        double currentLoan = loan;
 
         // solve for periodPay: n * (currentLoan - periodPay)*(1 + rate/100))
         for(int i = 1; i <= n; i++) {
