@@ -51,12 +51,12 @@ public class LoanCalc{
 
         return periodPay;
     }
-    public static int bisectionSolver(int loan, int rate, int n, double epsilon) {
+    public static double bisectionSolver(double loan, double rate, double n, double epsilon) {
 
         iterationCounter = 0;
-        int lowVal = 0;
-        int highVal = loan;
-        int periodPay = (lowVal + highVal) / 2;
+        double lowVal = 0;
+        double highVal = loan;
+        double periodPay = (lowVal + highVal) / 2;
 
         while ( (highVal - lowVal) > epsilon) {
             //resetting the low and high value for the next iteration
