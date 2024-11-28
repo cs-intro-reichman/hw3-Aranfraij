@@ -11,79 +11,74 @@ public class LoanCalc {
 
         System.out.println("Loan = " + loan + ", interest rate = " + rate + "%, periods = " + n);
 
-        // Computes the periodical payment using brute force search
-        iterationCounter = 0; // Reset the iteration counter
+        // Brute force search
+        iterationCounter = 0;
         System.out.print("Periodical payment, using brute force: ");
-        System.out.printf("%d", (int) Math.floor(bruteForceSolver(loan, rate, n, epsilon)));  // Use integer output
-        System.out.println();
-        System.out.println("number of iterations: " + iterationCounter);
+        double bruteForcePayment = bruteForceSolver(loan, rate, n, epsilon);
+        System.out.printf("%.2f", bruteForcePayment);
+        System.out.println("\nNumber of iterations: " + iterationCounter);
 
-        // Computes the periodical payment using bi-section search
-        iterationCounter = 0; // Reset the counter
-        System.out.print("Periodical payment, using bi-section search: ");
-        System.out.printf("%d", (int) Math.floor(bisectionSolver(loan, rate, n, epsilon)));  // Use integer output
-        System.out.println();
-        System.out.println("number of iterations: " + iterationCounter);
+        // Bisection search
+        iterationCounter = 0;
+        System.out.print("Periodical payment, using bisection search: ");
+        double bisectionPayment = bisectionSolver(loan, rate, n, epsilon);
+        System.out.printf("%.2f", bisectionPayment);
+        System.out.println("\nNumber of iterations: " + iterationCounter);
     }
 
     public static double bruteForceSolver(double loan, double rate, int n, double epsilon) {
+        iterationCounter = 0;
+        double periodPay = loan / n;  // Start with an initial guess
+        double step = loan / 10;      // Reasonable initial step size
 
-        iterationCounter = 0; // Reset counter
-        double currentLoan = loan;
-        double periodPay = loan / n; // Start with an estimate
-        double step = 10;  // Start with a reasonable step size
+        while (true) {
+            double balance = endBalance(loan, rate, n, periodPay);
+            if (Math.abs(balance) <= epsilon) break;
 
-        while (Math.abs(currentLoan) > epsilon) {
-            currentLoan = endBalance(loan, rate, n, periodPay);
-
-            if (currentLoan > epsilon) {
-                periodPay += step; // Increment by the step size
-            } else if (currentLoan < -epsilon) {
-                periodPay -= step; // Decrease if overshooting
+            if (balance > 0) {
+                periodPay += step;  // Payment is too small
             } else {
-                break;
+                periodPay -= step;  // Payment is too large
             }
 
-            // Gradually reduce the step size for finer adjustments
-            step = Math.max(step / 2, 1);
+            // Reduce step size as balance approaches zero
+            step = Math.max(step / 2, 0.01);
 
-            iterationCounter++; // Increment exactly once per iteration
+            iterationCounter++;
         }
 
         return periodPay;
     }
 
     public static double bisectionSolver(double loan, double rate, int n, double epsilon) {
-
-        iterationCounter = 0; // Reset the counter
-        double lowVal = 0;
+        iterationCounter = 0;
+        double lowVal = loan / n;
         double highVal = loan;
-        double periodPay = (lowVal + highVal) / 2;
+        double periodPay;
 
         while ((highVal - lowVal) > epsilon) {
-            if (endBalance(loan, rate, n, periodPay) * endBalance(loan, rate, n, lowVal) > 0) {
-                lowVal = periodPay;
+            periodPay = (lowVal + highVal) / 2;
+            double balance = endBalance(loan, rate, n, periodPay);
+
+            if (Math.abs(balance) <= epsilon) {
+                return periodPay;
+            } else if (balance > 0) {
+                lowVal = periodPay;  // Payment is too small
             } else {
-                highVal = periodPay;
+                highVal = periodPay;  // Payment is too large
             }
 
-            periodPay = (lowVal + highVal) / 2;
-
-            iterationCounter++; // Increment exactly once per loop iteration
+            iterationCounter++;
         }
 
-        return periodPay;
+        return (lowVal + highVal) / 2;
     }
 
     private static double endBalance(double loan, double rate, int n, double payment) {
-
         double currentLoan = loan;
-
-        // Calculate the remaining loan balance after n periods
         for (int i = 1; i <= n; i++) {
             currentLoan = (currentLoan - payment) * (1 + rate / 100);
         }
-
         return currentLoan;
     }
 }
