@@ -11,18 +11,46 @@ public class LoanCalc {
 
         System.out.println("Loan = " + loan + ", interest rate = " + rate + "%, periods = " + n);
 
-        // Bi-section solver (more efficient)
-        iterationCounter = 0; // Reset counter
-        System.out.print("Periodical payment, using bi-section search: ");
-        System.out.printf("%.0f", Math.floor(bisectionSolver(loan, rate, n, epsilon)));
+        // Computes the periodical payment using brute force search
+        iterationCounter = 0; // Reset the iteration counter
+        System.out.print("Periodical payment, using brute force: ");
+        System.out.printf("%d", (int) Math.floor(bruteForceSolver(loan, rate, n, epsilon)));  // Use integer output
         System.out.println();
         System.out.println("number of iterations: " + iterationCounter);
 
-        // If brute force is still needed for small test cases, use the following:
-        // System.out.print("Periodical payment, using brute force: ");
-        // System.out.printf("%.0f", Math.floor(bruteForceSolver(loan, rate, n, epsilon)));
-        // System.out.println();
-        // System.out.println("number of iterations: " + iterationCounter);
+        // Computes the periodical payment using bi-section search
+        iterationCounter = 0; // Reset the counter
+        System.out.print("Periodical payment, using bi-section search: ");
+        System.out.printf("%d", (int) Math.floor(bisectionSolver(loan, rate, n, epsilon)));  // Use integer output
+        System.out.println();
+        System.out.println("number of iterations: " + iterationCounter);
+    }
+
+    public static double bruteForceSolver(double loan, double rate, int n, double epsilon) {
+
+        iterationCounter = 0; // Reset counter
+        double currentLoan = loan;
+        double periodPay = loan / n; // Start with an estimate
+        double step = 10;  // Start with a reasonable step size
+
+        while (Math.abs(currentLoan) > epsilon) {
+            currentLoan = endBalance(loan, rate, n, periodPay);
+
+            if (currentLoan > epsilon) {
+                periodPay += step; // Increment by the step size
+            } else if (currentLoan < -epsilon) {
+                periodPay -= step; // Decrease if overshooting
+            } else {
+                break;
+            }
+
+            // Gradually reduce the step size for finer adjustments
+            step = Math.max(step / 2, 1);
+
+            iterationCounter++; // Increment exactly once per iteration
+        }
+
+        return periodPay;
     }
 
     public static double bisectionSolver(double loan, double rate, int n, double epsilon) {
