@@ -41,13 +41,28 @@ public class Anagram {
     // Returns a preprocessed version of the given string: all the letter characters
     // are converted to lower-case, and all the other characters are deleted. For example, 
     // the string "What? No way!" becomes "whatnoway"
-  public static String preProcess(String str) {
-    String ans = "";
-    for (int i = 0; i < str.length(); i++) {
-        char c = str.charAt(i);
-        if (c >= 'a' && c <= 'z') {
-            ans += c;
+    public static String preProcess(String str) {
+        String ans = "";
+        str = str.toLowerCase(); // Ensure the string is in lowercase
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (c >= 'a' && c <= 'z') {
+                ans += c;
+            }
         }
+        return ans;
     }
-    return ans;
+
+    // Returns a random anagram of the given string.
+    public static String randomAnagram(String str) {
+        str = preProcess(str);
+        char[] chars = str.toCharArray();
+        for (int i = chars.length - 1; i > 0; i--) {
+            int j = (int) (Math.random() * (i + 1));
+            char temp = chars[i];
+            chars[i] = chars[j];
+            chars[j] = temp;
+        }
+        return new String(chars);
+    }
 }
