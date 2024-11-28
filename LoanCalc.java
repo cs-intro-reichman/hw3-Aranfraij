@@ -50,30 +50,27 @@ public class LoanCalc{
         }
 
         return periodPay;
-    }
-    public static double bisectionSolver(double loan, double rate, double n, double epsilon) {
+    }public static double bisectionSolver(double loan, double rate, int n, double epsilon) {
+    iterationCounter = 0;
+    double lowVal = 0;
+    double highVal = loan;
+    double periodPay = (lowVal + highVal) / 2;
 
-        iterationCounter = 0;
-        double lowVal = 0;
-        double highVal = loan;
-        double periodPay = (lowVal + highVal) / 2;
-
-        while ( (highVal - lowVal) > epsilon) {
-            //resetting the low and high value for the next iteration
-            if(endBalance(loan, rate, n, periodPay) * endBalance(loan, rate, n, lowVal) > 0)
-                lowVal = periodPay;
-
-            else
-                highVal = periodPay;
-
-            periodPay = (lowVal + highVal) / 2;
-
-            iterationCounter++;
+    while ((highVal - lowVal) > epsilon) {
+        // Adjust the range based on the sign of the end balance
+        if (endBalance(loan, rate, n, periodPay) * endBalance(loan, rate, n, lowVal) > 0) {
+            lowVal = periodPay;
+        } else {
+            highVal = periodPay;
         }
 
+        periodPay = (lowVal + highVal) / 2;
 
-        return periodPay;
+        iterationCounter++;
     }
+
+    return periodPay;
+}
 
     private static double endBalance(double loan, double rate, int n, double payment) {
 
