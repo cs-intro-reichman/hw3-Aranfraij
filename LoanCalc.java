@@ -12,15 +12,14 @@ public class LoanCalc {
         System.out.println("Loan = " + loan + ", interest rate = " + rate + "%, periods = " + n);
 
         // Computes the periodical payment using brute force search
+        iterationCounter = 0; // Reset counter
         System.out.print("Periodical payment, using brute force: ");
         System.out.printf("%.0f", Math.floor(bruteForceSolver(loan, rate, n, epsilon)));
         System.out.println();
         System.out.println("number of iterations: " + iterationCounter);
 
-        // Resetting iterationCounter for the next method
-        iterationCounter = 0;
-
         // Computes the periodical payment using bisection search
+        iterationCounter = 0; // Reset counter
         System.out.print("Periodical payment, using bi-section search: ");
         System.out.printf("%.0f", Math.floor(bisectionSolver(loan, rate, n, epsilon)));
         System.out.println();
@@ -29,8 +28,8 @@ public class LoanCalc {
 
     public static double bruteForceSolver(double loan, double rate, int n, double epsilon) {
 
-        iterationCounter = 0;
-        double currentLoan = loan; // Temporary for calculations
+        iterationCounter = 0; // Ensure the counter starts at 0
+        double currentLoan = loan;
         double periodPay = loan / n;
 
         while (currentLoan >= epsilon) {
@@ -40,11 +39,11 @@ public class LoanCalc {
             if (currentLoan <= epsilon) {
                 break;
             } else {
-                periodPay += epsilon / 10; // Smaller step size to prevent overshooting
-                currentLoan = loan;
+                periodPay += epsilon / 10; // Smaller step size to reduce overshooting
+                currentLoan = loan; // Reset the loan balance for recalculation
             }
 
-            iterationCounter++;
+            iterationCounter++; // Increment counter correctly
         }
 
         return periodPay;
@@ -52,13 +51,12 @@ public class LoanCalc {
 
     public static double bisectionSolver(double loan, double rate, int n, double epsilon) {
 
-        iterationCounter = 0;
+        iterationCounter = 0; // Ensure the counter starts at 0
         double lowVal = 0;
         double highVal = loan;
         double periodPay = (lowVal + highVal) / 2;
 
         while ((highVal - lowVal) > epsilon) {
-            // Adjust the range based on the sign of the end balance
             if (endBalance(loan, rate, n, periodPay) * endBalance(loan, rate, n, lowVal) > 0) {
                 lowVal = periodPay;
             } else {
@@ -67,7 +65,7 @@ public class LoanCalc {
 
             periodPay = (lowVal + highVal) / 2;
 
-            iterationCounter++;
+            iterationCounter++; // Increment counter correctly
         }
 
         return periodPay;
