@@ -48,14 +48,14 @@ public class Anagram {
     }
 
     // Returns a preprocessed version of the given string: all the letter characters
-    // are converted to lower-case, and all the other characters (including spaces) are deleted.
+    // are converted to lower-case, spaces are preserved, and all other characters are deleted.
     public static String preProcess(String str) {
         StringBuilder ans = new StringBuilder();
         str = str.toLowerCase(); // Convert to lowercase
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
-            if (c >= 'a' && c <= 'z') {
-                ans.append(c); // Retain letters only
+            if ((c >= 'a' && c <= 'z') || c == ' ') {
+                ans.append(c); // Retain letters and spaces
             }
         }
         return ans.toString();
