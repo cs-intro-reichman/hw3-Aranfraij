@@ -1,14 +1,16 @@
 // A collection of functions for handling anagrams.
+import java.util.HashMap;
+
 public class Anagram {
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         // Tests the isAnagram function.
         System.out.println(isAnagram("silent", "listen"));  // true
         System.out.println(isAnagram("William Shakespeare", "I am a weakish speller")); // true
         System.out.println(isAnagram("Madam Curie", "Radium came")); // true
-        
+
         // Tests the randomAnagram function.
         System.out.println(randomAnagram("silent")); // Prints a random anagram
-        
+
         // Performs a stress test of randomAnagram
         Boolean pass = true;
         String str = "this is a stress test";
@@ -22,19 +24,26 @@ public class Anagram {
     public static boolean isAnagram(String str1, String str2) {
         str1 = preProcess(str1);
         str2 = preProcess(str2);
+
+        // Quick check for different lengths
         if (str1.length() != str2.length()) {
             return false;
         }
-        for (int i = 0; i < str1.length(); i++) {
-            char c = str1.charAt(i);
-            int count1 = 0;
-            int count2 = 0;
-            for (int j = 0; j < str1.length(); j++) {
-                if (str1.charAt(j) == c) count1++;
-                if (str2.charAt(j) == c) count2++;
-            }
-            if (count1 != count2) return false;
+
+        // Count character frequencies for str1
+        HashMap<Character, Integer> charCount = new HashMap<>();
+        for (char c : str1.toCharArray()) {
+            charCount.put(c, charCount.getOrDefault(c, 0) + 1);
         }
+
+        // Verify character frequencies match with str2
+        for (char c : str2.toCharArray()) {
+            if (!charCount.containsKey(c) || charCount.get(c) == 0) {
+                return false;
+            }
+            charCount.put(c, charCount.get(c) - 1);
+        }
+
         return true;
     }
 
@@ -42,15 +51,15 @@ public class Anagram {
     // are converted to lower-case, spaces are preserved, and all the other characters 
     // are deleted. For example, the string "What? No way!" becomes "what no way".
     public static String preProcess(String str) {
-        String ans = "";
+        StringBuilder ans = new StringBuilder();
         str = str.toLowerCase(); // Convert to lowercase
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
             if ((c >= 'a' && c <= 'z') || c == ' ') {
-                ans += c; // Retain letters and spaces
+                ans.append(c); // Retain letters and spaces
             }
         }
-        return ans;
+        return ans.toString();
     }
 
     // Returns a random anagram of the given string.
