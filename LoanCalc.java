@@ -28,22 +28,19 @@ public class LoanCalc {
 
     public static double bruteForceSolver(double loan, double rate, int n, double epsilon) {
 
-        iterationCounter = 0; // Ensure the counter starts at 0
+        iterationCounter = 0; // Reset the counter
         double currentLoan = loan;
         double periodPay = loan / n;
 
-        while (currentLoan >= epsilon) {
+        while (Math.abs(currentLoan) > epsilon) { // Ensure the loop stops correctly
 
             currentLoan = endBalance(loan, rate, n, periodPay);
 
-            if (currentLoan <= epsilon) {
-                break;
-            } else {
-                periodPay += epsilon / 10; // Smaller step size to reduce overshooting
-                currentLoan = loan; // Reset the loan balance for recalculation
+            if (currentLoan > epsilon) {
+                periodPay += epsilon; // Increment by epsilon directly
             }
 
-            iterationCounter++; // Increment counter correctly
+            iterationCounter++; // Increment exactly once per loop iteration
         }
 
         return periodPay;
@@ -51,7 +48,7 @@ public class LoanCalc {
 
     public static double bisectionSolver(double loan, double rate, int n, double epsilon) {
 
-        iterationCounter = 0; // Ensure the counter starts at 0
+        iterationCounter = 0; // Reset the counter
         double lowVal = 0;
         double highVal = loan;
         double periodPay = (lowVal + highVal) / 2;
@@ -65,7 +62,7 @@ public class LoanCalc {
 
             periodPay = (lowVal + highVal) / 2;
 
-            iterationCounter++; // Increment counter correctly
+            iterationCounter++; // Increment exactly once per loop iteration
         }
 
         return periodPay;
