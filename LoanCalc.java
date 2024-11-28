@@ -26,25 +26,39 @@ public class LoanCalc {
         System.out.println("number of iterations: " + iterationCounter);
     }
 
-    public static double bruteForceSolver(double loan, double rate, int n, double epsilon) {
+  public static double bruteForceSolver(double loan, double rate, int n, double epsilon) {
 
-        iterationCounter = 0; // Reset the counter
-        double currentLoan = loan;
-        double periodPay = loan / n;
+    iterationCounter = 0; // Reset the counter
+    double currentLoan = loan;
+    double periodPay = loan / n; // Start with an estimate
+    double step = loan / n;      // Start with a larger step size
 
-        while (Math.abs(currentLoan) > epsilon) { // Ensure the loop stops correctly
+    while (Math.abs(currentLoan) > epsilon) {
+        currentLoan = endBalance(loan, rate, n, periodPay);
 
-            currentLoan = endBalance(loan, rate, n, periodPay);
-
-            if (currentLoan > epsilon) {
-                periodPay += epsilon; // Increment by epsilon directly
-            }
-
-            iterationCounter++; // Increment exactly once per loop iteration
+        if (currentLoan > epsilon) {
+            periodPay += step; // Increment by the step size
+        } else if (currentLoan < -epsilon) {
+            periodPay -= step; // Decrease if overshooting
+        } else {
+            break;
         }
 
-        return periodPay;
+        // Gradually reduce the step size for finer adjustments
+        step = Math.max(step / 2, epsilon);
+
+        iterationCounter++; // Increment once per iteration
+
+        // Timeout safeguard: Break if iterations exceed a threshold
+        if (iterationCounter > 1_000_000) {
+            System.out.println("Brute force solver timed out.");
+            break;
+        }
     }
+
+    return periodPay;
+}
+
 
     public static double bisectionSolver(double loan, double rate, int n, double epsilon) {
 
