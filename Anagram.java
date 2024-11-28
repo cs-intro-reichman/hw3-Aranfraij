@@ -1,71 +1,38 @@
-// A collection of functions for handling anagrams.
-import java.util.HashMap;
-
-public class Anagram {
+public class TestAnagram {
     public static void main(String[] args) {
-        // Basic Anagram Operations Tests
-        System.out.println("Testing Basic Anagram Operations:");
-        System.out.println(isAnagram("silent", "listen"));  // true
-        System.out.println(isAnagram("William Shakespeare", "I am a weakish speller")); // true
-        System.out.println(isAnagram("Madam Curie", "Radium came")); // true
+        System.out.println("Testing preProcess method:");
 
-        // Advanced Anagram Operations Tests
-        System.out.println("Testing Advanced Anagram Operations:");
-        System.out.println(preProcess("What? No way!", true));  // "what no way"
-        System.out.println(preProcess("Multiple    Spaces!", true));  // "multiple    spaces"
-        System.out.println(randomAnagram("silent"));  // Random anagram of "silent"
-    }
+        // Test 1: Simple lowercase
+        boolean test1 = Anagram.preProcess("abc", false).equals("abc");
+        System.out.println("Test 1 (simple lowercase): " + (test1 ? "PASS" : "FAIL"));
 
-    // Returns true if the two given strings are anagrams, false otherwise.
-    public static boolean isAnagram(String str1, String str2) {
-        str1 = preProcess(str1, false); // Strip spaces for basic operations
-        str2 = preProcess(str2, false); // Strip spaces for basic operations
+        // Test 2: Preserve spaces
+        boolean test2 = Anagram.preProcess("Hello World!", true).equals("hello world");
+        System.out.println("Test 2 (preserve spaces): " + (test2 ? "PASS" : "FAIL"));
 
-        if (str1.length() != str2.length()) {
-            return false;
-        }
+        // Test 3: Case conversion
+        boolean test3 = Anagram.preProcess("HeLLo", false).equals("hello");
+        System.out.println("Test 3 (case conversion): " + (test3 ? "PASS" : "FAIL"));
 
-        HashMap<Character, Integer> charCount = new HashMap<>();
-        for (char c : str1.toCharArray()) {
-            charCount.put(c, charCount.getOrDefault(c, 0) + 1);
-        }
+        // Test 4: Empty string
+        boolean test4 = Anagram.preProcess("", false).equals("");
+        System.out.println("Test 4 (empty string): " + (test4 ? "PASS" : "FAIL"));
 
-        for (char c : str2.toCharArray()) {
-            if (!charCount.containsKey(c) || charCount.get(c) == 0) {
-                return false;
-            }
-            charCount.put(c, charCount.get(c) - 1);
-        }
+        System.out.println("\nTesting randomAnagram method:");
 
-        return true;
-    }
+        // Test 1: Check if randomAnagram result is an anagram
+        String str = "silent";
+        boolean test5 = Anagram.isAnagram(str, Anagram.randomAnagram(str));
+        System.out.println("Test 1 (is anagram): " + (test5 ? "PASS" : "FAIL"));
 
-    // Preprocesses a string based on the given mode.
-    // If preserveSpaces is true, spaces are retained. Otherwise, spaces are removed.
-    public static String preProcess(String str, boolean preserveSpaces) {
-        StringBuilder ans = new StringBuilder();
-        str = str.toLowerCase();
-        for (int i = 0; i < str.length(); i++) {
-            char c = str.charAt(i);
-            if (c >= 'a' && c <= 'z') {
-                ans.append(c); // Retain alphabetic characters
-            } else if (preserveSpaces && c == ' ') {
-                ans.append(c); // Retain spaces if mode is true
-            }
-        }
-        return ans.toString();
-    }
+        // Test 2: Check if randomAnagram result has the same length
+        boolean test6 = Anagram.randomAnagram(str).length() == str.length();
+        System.out.println("Test 2 (same length): " + (test6 ? "PASS" : "FAIL"));
 
-    // Returns a random anagram of the given string.
-    public static String randomAnagram(String str) {
-        str = preProcess(str, true); // Preserve spaces for advanced operations
-        char[] chars = str.toCharArray();
-        for (int i = chars.length - 1; i > 0; i--) {
-            int j = (int) (Math.random() * (i + 1));
-            char temp = chars[i];
-            chars[i] = chars[j];
-            chars[j] = temp;
-        }
-        return new String(chars);
+        // Test 3: Check randomness of randomAnagram
+        String random1 = Anagram.randomAnagram(str);
+        String random2 = Anagram.randomAnagram(str);
+        boolean test7 = !random1.equals(random2); // Likely to pass if truly random
+        System.out.println("Test 3 (randomness): " + (test7 ? "PASS" : "FAIL"));
     }
 }
