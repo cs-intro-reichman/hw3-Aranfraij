@@ -13,7 +13,7 @@ public class LoanCalc {
 
         // Computes the periodical payment using brute force search
         System.out.print("Periodical payment, using brute force: ");
-        System.out.printf("%.0f", bruteForceSolver(loan, rate, n, epsilon));
+        System.out.printf("%.0f", Math.floor(bruteForceSolver(loan, rate, n, epsilon)));
         System.out.println();
         System.out.println("number of iterations: " + iterationCounter);
 
@@ -22,7 +22,7 @@ public class LoanCalc {
 
         // Computes the periodical payment using bisection search
         System.out.print("Periodical payment, using bi-section search: ");
-        System.out.printf("%.0f", bisectionSolver(loan, rate, n, epsilon));
+        System.out.printf("%.0f", Math.floor(bisectionSolver(loan, rate, n, epsilon)));
         System.out.println();
         System.out.println("number of iterations: " + iterationCounter);
     }
@@ -40,7 +40,7 @@ public class LoanCalc {
             if (currentLoan <= epsilon) {
                 break;
             } else {
-                periodPay += epsilon;
+                periodPay += epsilon / 10; // Smaller step size to prevent overshooting
                 currentLoan = loan;
             }
 
