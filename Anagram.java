@@ -3,40 +3,33 @@ import java.util.HashMap;
 
 public class Anagram {
     public static void main(String[] args) {
-        // Tests the isAnagram function.
+        // Basic Anagram Operations Tests
+        System.out.println("Testing Basic Anagram Operations:");
         System.out.println(isAnagram("silent", "listen"));  // true
         System.out.println(isAnagram("William Shakespeare", "I am a weakish speller")); // true
         System.out.println(isAnagram("Madam Curie", "Radium came")); // true
 
-        // Tests the randomAnagram function.
-        System.out.println(randomAnagram("silent")); // Prints a random anagram
-
-        // Performs a stress test of randomAnagram
-        Boolean pass = true;
-        String str = "this is a stress test";
-        for (int i = 0; i < 1000; i++) {
-            pass = pass && isAnagram(str, randomAnagram(str));    
-        }
-        System.out.println(pass); // true if all tests are positive
+        // Advanced Anagram Operations Tests
+        System.out.println("Testing Advanced Anagram Operations:");
+        System.out.println(preProcess("What? No way!", true));  // "what no way"
+        System.out.println(preProcess("Multiple    Spaces!", true));  // "multiple    spaces"
+        System.out.println(randomAnagram("silent"));  // Random anagram of "silent"
     }
 
     // Returns true if the two given strings are anagrams, false otherwise.
     public static boolean isAnagram(String str1, String str2) {
-        str1 = preProcess(str1);
-        str2 = preProcess(str2);
+        str1 = preProcess(str1, false); // Strip spaces for basic operations
+        str2 = preProcess(str2, false); // Strip spaces for basic operations
 
-        // Quick check for different lengths
         if (str1.length() != str2.length()) {
             return false;
         }
 
-        // Count character frequencies for str1
         HashMap<Character, Integer> charCount = new HashMap<>();
         for (char c : str1.toCharArray()) {
             charCount.put(c, charCount.getOrDefault(c, 0) + 1);
         }
 
-        // Verify character frequencies match with str2
         for (char c : str2.toCharArray()) {
             if (!charCount.containsKey(c) || charCount.get(c) == 0) {
                 return false;
@@ -47,15 +40,17 @@ public class Anagram {
         return true;
     }
 
-    // Returns a preprocessed version of the given string: all the letter characters
-    // are converted to lower-case, spaces are preserved, and all other characters are deleted.
-    public static String preProcess(String str) {
+    // Preprocesses a string based on the given mode.
+    // If preserveSpaces is true, spaces are retained. Otherwise, spaces are removed.
+    public static String preProcess(String str, boolean preserveSpaces) {
         StringBuilder ans = new StringBuilder();
-        str = str.toLowerCase(); // Convert to lowercase
+        str = str.toLowerCase();
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
-            if ((c >= 'a' && c <= 'z') || c == ' ') {
-                ans.append(c); // Retain letters and spaces
+            if (c >= 'a' && c <= 'z') {
+                ans.append(c); // Retain alphabetic characters
+            } else if (preserveSpaces && c == ' ') {
+                ans.append(c); // Retain spaces if mode is true
             }
         }
         return ans.toString();
@@ -63,7 +58,7 @@ public class Anagram {
 
     // Returns a random anagram of the given string.
     public static String randomAnagram(String str) {
-        str = preProcess(str);
+        str = preProcess(str, true); // Preserve spaces for advanced operations
         char[] chars = str.toCharArray();
         for (int i = chars.length - 1; i > 0; i--) {
             int j = (int) (Math.random() * (i + 1));
